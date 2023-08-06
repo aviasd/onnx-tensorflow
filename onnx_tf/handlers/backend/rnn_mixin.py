@@ -39,7 +39,8 @@ class RNNMixin(object):
     cell_fw = tf.compat.v1.nn.rnn_cell.MultiRNNCell(rnn_cell)
 
     if direction == "bidirectional":
-      cell_kwargs["activation"] = activations[1]
+      if cell_class is not tf.keras.layers.GRUCell:
+        cell_kwargs["activation"] = activations[1]
       rnn_cell_bw = [cell_class(**cell_kwargs)]
       cell_bw = tf.compat.v1.nn.rnn_cell.MultiRNNCell(rnn_cell_bw)
 
