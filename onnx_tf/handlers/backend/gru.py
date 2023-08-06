@@ -206,7 +206,7 @@ class GRU(RNNMixin, BackendHandler):
                                          tensor_dict=tensor_dict,
                                          is_bidirectional=num_directions == 2),
                                      reuse=False):
-      cell_kwargs["num_units"] = hidden_size
+      cell_kwargs["units"] = hidden_size
       if input_size < 4 or node.inputs[3] not in tensor_dict:
         cell_kwargs["bias_initializer"] = tf.zeros_initializer
       initial_state = None
