@@ -29,7 +29,9 @@ class RNNMixin(object):
 
   @classmethod
   def rnn(cls, x, cell_class, cell_kwargs, rnn_kwargs, activations, direction):
-    cell_kwargs["activation"] = activations[0]
+    # cell_kwargs["activation"] = activations[0]
+    if cell_class is not tf.keras.layers.GRUCell:
+      cell_kwargs["activation"] = activations[0]
 
     if cls.rnn_cell is None:
       cls.rnn_cell = [cell_class(**cell_kwargs)]
