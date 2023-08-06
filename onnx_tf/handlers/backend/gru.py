@@ -64,9 +64,9 @@ class GRU(RNNMixin, BackendHandler):
     num_directions = 2 if direction == "bidirectional" else 1
     if "clip" in node.attrs:
       exception.OP_UNSUPPORTED_EXCEPT("GRU with clip", "Tensorflow")
-    if node.attrs.get("linear_before_reset", 0):
-      exception.OP_UNSUPPORTED_EXCEPT("GRU with linear_before_reset",
-                                      "Tensorflow")
+    # if node.attrs.get("linear_before_reset", 0):
+    #   exception.OP_UNSUPPORTED_EXCEPT("GRU with linear_before_reset",
+    #                                   "Tensorflow")
     if "activations" in node.attrs:
       activations = list(map(lambda x: x.lower(), node.attrs["activations"]))
       if activations[0] != "sigmoid":
@@ -111,7 +111,8 @@ class GRU(RNNMixin, BackendHandler):
                                                    cls.weight_gates_var_name)]
         new_w = tf.transpose(tf.concat([w_r, w_z], 0))
         new_r = tf.transpose(tf.concat([r_r, r_z], 0))
-      elif names[-2] == "candidate":
+      # elif names[-2] == "candidate":
+      elif names[-2] == "candidate" or names[-3] == "candidate":
         weight_var = tensor_dict[get_variable_name(
             node, cls.weight_candidate_var_name)]
         new_w = tf.transpose(w_h)
@@ -126,7 +127,8 @@ class GRU(RNNMixin, BackendHandler):
     if names[-1] == "bias":
       if names[-2] == "gates":
         bias_var = tensor_dict[get_variable_name(node, cls.bias_gates_var_name)]
-      elif names[-2] == "candidate":
+      # elif names[-2] == "candidate"
+      elif names[-2] == "candidate" or names[-3] == "candidate":
         bias_var = tensor_dict[get_variable_name(node,
                                                  cls.bias_candidate_var_name)]
       if len(node.inputs) >= 4:
@@ -229,7 +231,7 @@ class GRU(RNNMixin, BackendHandler):
       rnn_kwargs["time_major"] = True
       rnn_kwargs["dtype"] = tf.float32
 
-      outputs, states = cls.rnn(x, tf.compat.v1.nn.rnn_cell.GRUCell,
+      outputs, states = cls.rnn(x, tf.keras.layers.GRUCell,
                                 cell_kwargs, rnn_kwargs, tf_activations,
                                 direction)
 
